@@ -1,0 +1,150 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="16dp">
+
+    <!-- First number -->
+    <EditText
+        android:id="@+id/editNumber1"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:hint="Enter first number"
+        android:inputType="number" />
+
+    <!-- Second number -->
+    <EditText
+        android:id="@+id/editNumber2"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:hint="Enter second number"
+        android:inputType="number" />
+
+
+    <!-- New button to add the two values -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="353dp"
+        android:orientation="horizontal">
+
+        <LinearLayout
+            android:layout_width="180dp"
+            android:layout_height="271dp"
+            android:orientation="vertical">
+
+            <Button
+                android:id="@+id/btnAdd"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="+ Add" />
+
+            <Button
+                android:id="@+id/btnSub"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="- Subtract" />
+
+            <Button
+                android:id="@+id/btnMul"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="* Multiply" />
+
+            <Button
+                android:id="@+id/btnDiv"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="/ Divide" />
+        </LinearLayout>
+
+
+        <Space
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1" />
+
+        <LinearLayout
+            android:layout_width="180dp"
+            android:layout_height="316dp"
+            android:orientation="vertical">
+
+            <Button
+                android:id="@+id/btnExp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="^ Exponent" />
+
+            <Button
+                android:id="@+id/btnMod"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="% Modulus" />
+
+            <Space
+                android:layout_width="match_parent"
+                android:layout_height="10dp" />
+
+            <TextView
+                android:id="@+id/textView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="  Single Value Expressions:" />
+
+            <Button
+                android:id="@+id/btnSqr"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Square Root" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <Button
+                    android:id="@+id/btnLog"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="Log" />
+
+                <Button
+                    android:id="@+id/btnSin"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="Sin" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <Button
+                    android:id="@+id/btnCos"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="Cos" />
+
+                <Button
+                    android:id="@+id/btnTan"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="Tan" />
+            </LinearLayout>
+
+
+        </LinearLayout>
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/txtResult"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Result will appear here" />
+
+</LinearLayout>
