@@ -40,8 +40,12 @@ public class GameFragment extends Fragment {
     );
 
     String[] words = {
-            "RED", "ORANGE", "YELLOW",
-            "GREEN", "BLUE", "VIOLET"
+            "RED",
+            "ORANGE",
+            "YELLOW",
+            "GREEN",
+            "BLUE",
+            "VIOLET"
     };
 
     Random rand = new Random();
@@ -51,6 +55,7 @@ public class GameFragment extends Fragment {
     String correctAnswer;
 
     int score = 0;
+
 
     public GameFragment() {}
 
@@ -208,15 +213,9 @@ public class GameFragment extends Fragment {
                 requireActivity().getSupportFragmentManager()
                         .beginTransaction()
                         .setCustomAnimations(
-                                R.anim.fade_in,   // entering (GameOver fades in)
-                                R.anim.fade_out   // exiting (Game fades out)
+                                R.anim.fade_in,
+                                R.anim.fade_out
                         )
-                        .replace(R.id.fragment_container, gameOverFragment)
-                        .addToBackStack(null)
-                        .commit();
-
-                requireActivity().getSupportFragmentManager()
-                        .beginTransaction()
                         .replace(R.id.fragment_container, gameOverFragment)
                         .addToBackStack(null)
                         .commit();

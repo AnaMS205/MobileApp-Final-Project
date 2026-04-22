@@ -60,7 +60,7 @@ public class GameOverFragment extends Fragment {
 
         HighScores scores = loadScores();
 
-        if (finalScore > scores.s3) {
+        if (finalScore > scores.score3) {
             promptForInitials(finalScore, scores, score1, score2, score3);
         } else {
             updateUI(scores, score1, score2, score3);
@@ -71,18 +71,15 @@ public class GameOverFragment extends Fragment {
         var prefs = requireActivity().getSharedPreferences("scores", 0);
 
         return new HighScores(
-                prefs.getInt("s1", 0),
-                prefs.getInt("s2", 0),
-                prefs.getInt("s3", 0),
-                prefs.getString("n1", "AAA"),
-                prefs.getString("n2", "BBB"),
-                prefs.getString("n3", "CCC")
+                prefs.getInt("score1", 0),
+                prefs.getInt("score2", 0),
+                prefs.getInt("score3", 0),
+                prefs.getString("name1", "AAA"),
+                prefs.getString("name2", "BBB"),
+                prefs.getString("name3", "CCC")
         );
     }
 
-    // ---------------------------
-    // Prompt for initials
-    // ---------------------------
     private void promptForInitials(
             int finalScore,
             HighScores scores,
@@ -118,60 +115,60 @@ public class GameOverFragment extends Fragment {
                 .show();
     }
 
-    private HighScores insertScore(int score, String name, HighScores s) {
+    private HighScores insertScore(int score, String name, HighScores highscore) {
 
-        if (score > s.s1) {
+        if (score > highscore.score1) {
             return new HighScores(
-                    score, s.s1, s.s2,
-                    name, s.n1, s.n2
+                    score, highscore.score1, highscore.score2,
+                    name, highscore.name1, highscore.name2
             );
-        } else if (score > s.s2) {
+        } else if (score > highscore.score2) {
             return new HighScores(
-                    s.s1, score, s.s2,
-                    s.n1, name, s.n2
+                    highscore.score1, score, highscore.score2,
+                    highscore.name1, name, highscore.name2
             );
         } else {
             return new HighScores(
-                    s.s1, s.s2, score,
-                    s.n1, s.n2, name
+                    highscore.score1, highscore.score2, score,
+                    highscore.name1, highscore.name2, name
             );
         }
     }
 
-    private void saveScores(HighScores s) {
+    private void saveScores(HighScores highscore) {
         var prefs = requireActivity().getSharedPreferences("scores", 0);
 
         prefs.edit()
-                .putInt("s1", s.s1).putString("n1", s.n1)
-                .putInt("s2", s.s2).putString("n2", s.n2)
-                .putInt("s3", s.s3).putString("n3", s.n3)
+                .putInt("score1", highscore.score1).putString("name1", highscore.name1)
+                .putInt("score2", highscore.score2).putString("name2", highscore.name2)
+                .putInt("score3", highscore.score3).putString("name3", highscore.name3)
                 .apply();
     }
 
     private void updateUI(
-            HighScores s,
+            HighScores highscore,
             TextView score1,
             TextView score2,
             TextView score3
     ) {
-        score1.setText(s.n1 + " - " + s.s1);
-        score2.setText(s.n2 + " - " + s.s2);
-        score3.setText(s.n3 + " - " + s.s3);
+        score1.setText(highscore.name1 + " - " + highscore.score1);
+        score2.setText(highscore.name2 + " - " + highscore.score2);
+        score3.setText(highscore.name3 + " - " + highscore.score3);
     }
 
     public class HighScores {
 
-        public int s1, s2, s3;
-        public String n1, n2, n3;
+        public int score1, score2, score3;
+        public String name1, name2, name3;
 
-        public HighScores(int s1, int s2, int s3,
-                          String n1, String n2, String n3) {
-            this.s1 = s1;
-            this.s2 = s2;
-            this.s3 = s3;
-            this.n1 = n1;
-            this.n2 = n2;
-            this.n3 = n3;
+        public HighScores(int score1, int score2, int score3,
+                          String name1, String name2, String name3) {
+            this.score1 = score1;
+            this.score2 = score2;
+            this.score3 = score3;
+            this.name1 = name1;
+            this.name2 = name2;
+            this.name3 = name3;
         }
     }
 }
