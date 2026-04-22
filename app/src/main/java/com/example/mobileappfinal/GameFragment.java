@@ -1,6 +1,7 @@
 package com.example.mobileappfinal;
 
 import android.os.Bundle;
+import android.os.CountDownTimer;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -10,7 +11,6 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
-import android.os.CountDownTimer;
 
 import java.util.Map;
 import java.util.Random;
@@ -21,12 +21,15 @@ public class GameFragment extends Fragment {
     private Button rightButton;
     private TextView wordBox;
     private TextView scoreBox;
+    private TextView timerText;
 
     private CountDownTimer timer;
-    private TextView timerText;
-    private static final long TIME_PER_ROUND = 5000;
-//I'm striking Indigo because its just too similar to Violet
-//that also might just be my color blindness
+
+    private static final String KEY_SCORE = "score";
+    private static final String KEY_WORD = "word";
+    private static final String KEY_COLOR = "color";
+    private static final String KEY_CORRECT = "correct";
+
     Map<String, Integer> colors = Map.of(
             "RED", 0xFFFF0000,
             "ORANGE", 0xFFFFA500,
@@ -37,12 +40,8 @@ public class GameFragment extends Fragment {
     );
 
     String[] words = {
-            "RED",
-            "ORANGE",
-            "YELLOW",
-            "GREEN",
-            "BLUE",
-            "VIOLET"
+            "RED", "ORANGE", "YELLOW",
+            "GREEN", "BLUE", "VIOLET"
     };
 
     Random rand = new Random();
@@ -53,9 +52,7 @@ public class GameFragment extends Fragment {
 
     int score = 0;
 
-    public GameFragment() {
-        // Required empty public constructor
-    }
+    public GameFragment() {}
 
     @Override
     public View onCreateView(
@@ -85,11 +82,57 @@ public class GameFragment extends Fragment {
         rightButton.setOnClickListener(v ->
                 handleChoice(rightButton.getText().toString()));
 
-        startRound();
+        if (savedInstanceState != null) {
+            score = savedInstanceState.getInt(KEY_SCORE);
+            currentWord = savedInstanceState.getString(KEY_WORD);
+            currentColorKey = savedInstanceState.getString(KEY_COLOR);
+            correctAnswer = savedInstanceState.getString(KEY_CORRECT);
+
+            restoreUI();
+        } else {
+            startRound();
+        }
+    }
+
+    @Override
+    public void onSaveInstanceState(@NonNull Bundle outState) {
+        super.onSaveInstanceState(outState);
+
+        outState.putInt(KEY_SCORE, score);
+        outState.putString(KEY_WORD, currentWord);
+        outState.putString(KEY_COLOR, currentColorKey);
+        outState.putString(KEY_CORRECT, correctAnswer);
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        if (timer != null) {
+            timer.cancel();
+            timer = null;
+        }
+    }
+
+    private void restoreUI() {
+        updateScore();
+
+        wordBox.setText(currentWord);
+        wordBox.setTextColor(colors.get(currentColorKey));
+
+        String wrongAnswer = currentWord;
+
+        if (rand.nextBoolean()) {
+            leftButton.setText(correctAnswer);
+            rightButton.setText(wrongAnswer);
+        } else {
+            leftButton.setText(wrongAnswer);
+            rightButton.setText(correctAnswer);
+        }
+
+        startTimer();
     }
 
     public void startRound() {
-
         if (timer != null) {
             timer.cancel();
         }
@@ -114,6 +157,7 @@ public class GameFragment extends Fragment {
             rightButton.setText(correctAnswer);
         }
 
+        updateScore();
         startTimer();
     }
 
@@ -121,11 +165,13 @@ public class GameFragment extends Fragment {
         if (timer != null) {
             timer.cancel();
         }
+
         if (chosen.equals(correctAnswer)) {
             score++;
         } else {
             score--;
         }
+
         updateScore();
         startRound();
     }
@@ -133,29 +179,54 @@ public class GameFragment extends Fragment {
     public void updateScore() {
         scoreBox.setText("Score: " + score);
     }
-    private void startTimer() {
 
+    private void startTimer() {
         long timeForRound = getTimeForRound();
 
         timer = new CountDownTimer(timeForRound, 1000) {
 
             @Override
             public void onTick(long millisUntilFinished) {
+                if (!isAdded()) return;
                 timerText.setText("Time: " + (millisUntilFinished / 1000));
             }
 
             @Override
             public void onFinish() {
-                score--;
-                updateScore();
-                startRound();
+                if (!isAdded()) return;
+
+                if (timer != null) {
+                    timer.cancel();
+                }
+
+                Fragment gameOverFragment = new GameOverFragment();
+
+                Bundle bundle = new Bundle();
+                bundle.putInt("final_score", score);
+                gameOverFragment.setArguments(bundle);
+
+                requireActivity().getSupportFragmentManager()
+                        .beginTransaction()
+                        .setCustomAnimations(
+                                R.anim.fade_in,   // entering (GameOver fades in)
+                                R.anim.fade_out   // exiting (Game fades out)
+                        )
+                        .replace(R.id.fragment_container, gameOverFragment)
+                        .addToBackStack(null)
+                        .commit();
+
+                requireActivity().getSupportFragmentManager()
+                        .beginTransaction()
+                        .replace(R.id.fragment_container, gameOverFragment)
+                        .addToBackStack(null)
+                        .commit();
             }
         }.start();
     }
+
     private long getTimeForRound() {
         long baseTime = 5000;
         long decrease = score * 200;
-
         long minTime = 1000;
 
         return Math.max(baseTime - decrease, minTime);
