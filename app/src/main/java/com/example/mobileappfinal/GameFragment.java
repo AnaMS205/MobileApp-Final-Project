@@ -28,17 +28,15 @@ public class GameFragment extends Fragment {
     private static final String KEY_SCORE = "score";
     private static final String KEY_WORD = "word";
     private static final String KEY_COLOR = "color";
-    private static final String KEY_CORRECT = "correct";
 
     Map<String, Integer> colors = Map.of(
-            "RED", 0xFFFF0000,
-            "ORANGE", 0xFFFFA500,
-            "YELLOW", 0xFFFFFF00,
-            "GREEN", 0xFF008000,
-            "BLUE", 0xFF0000FF,
-            "VIOLET", 0xFFEE82EE
+            "RED",    0xFFFF6B6B,
+            "ORANGE", 0xFFFF8A3D,
+            "YELLOW", 0xFFFFFF80,
+            "GREEN",  0xFF4CAF50,
+            "BLUE",   0xFF4DA3FF,
+            "VIOLET", 0xFFB388FF
     );
-
     String[] words = {
             "RED",
             "ORANGE",
@@ -50,9 +48,8 @@ public class GameFragment extends Fragment {
 
     Random rand = new Random();
 
-    String currentWord;
-    String currentColorKey;
-    String correctAnswer;
+    String currentWord; //WRONG CHOICE
+    String currentColorKey; // CORRECT CHOICE
 
     int score = 0;
 
@@ -60,18 +57,13 @@ public class GameFragment extends Fragment {
     public GameFragment() {}
 
     @Override
-    public View onCreateView(
-            @NonNull LayoutInflater inflater,
-            ViewGroup container,
-            Bundle savedInstanceState
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState
     ) {
         return inflater.inflate(R.layout.game_fragment, container, false);
     }
 
     @Override
-    public void onViewCreated(
-            @NonNull View view,
-            @Nullable Bundle savedInstanceState
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState
     ) {
         super.onViewCreated(view, savedInstanceState);
 
@@ -91,7 +83,6 @@ public class GameFragment extends Fragment {
             score = savedInstanceState.getInt(KEY_SCORE);
             currentWord = savedInstanceState.getString(KEY_WORD);
             currentColorKey = savedInstanceState.getString(KEY_COLOR);
-            correctAnswer = savedInstanceState.getString(KEY_CORRECT);
 
             restoreUI();
         } else {
@@ -106,9 +97,10 @@ public class GameFragment extends Fragment {
         outState.putInt(KEY_SCORE, score);
         outState.putString(KEY_WORD, currentWord);
         outState.putString(KEY_COLOR, currentColorKey);
-        outState.putString(KEY_CORRECT, correctAnswer);
     }
 
+    //it crashes when you flip the screen if you dont do this
+    //learned this the hard way
     @Override
     public void onDestroyView() {
         super.onDestroyView();
@@ -119,19 +111,18 @@ public class GameFragment extends Fragment {
     }
 
     private void restoreUI() {
-        updateScore();
+        scoreBox.setText("Score: " + score);;
 
         wordBox.setText(currentWord);
         wordBox.setTextColor(colors.get(currentColorKey));
 
-        String wrongAnswer = currentWord;
 
         if (rand.nextBoolean()) {
-            leftButton.setText(correctAnswer);
-            rightButton.setText(wrongAnswer);
+            leftButton.setText(currentColorKey);
+            rightButton.setText(currentWord);
         } else {
-            leftButton.setText(wrongAnswer);
-            rightButton.setText(correctAnswer);
+            leftButton.setText(currentWord);
+            rightButton.setText(currentColorKey);
         }
 
         startTimer();
@@ -144,6 +135,8 @@ public class GameFragment extends Fragment {
 
         currentWord = words[rand.nextInt(words.length)];
 
+        //a loop to make sure that the word is never same color as itself
+        //i.e. "Blue" won't be colored blue
         do {
             currentColorKey = words[rand.nextInt(words.length)];
         } while (currentColorKey.equals(currentWord));
@@ -151,18 +144,16 @@ public class GameFragment extends Fragment {
         wordBox.setText(currentWord);
         wordBox.setTextColor(colors.get(currentColorKey));
 
-        correctAnswer = currentColorKey;
-        String wrongAnswer = currentWord;
-
+        //coin flip to choose a correct and wrong button
         if (rand.nextBoolean()) {
-            leftButton.setText(correctAnswer);
-            rightButton.setText(wrongAnswer);
+            leftButton.setText(currentColorKey);
+            rightButton.setText(currentWord);
         } else {
-            leftButton.setText(wrongAnswer);
-            rightButton.setText(correctAnswer);
+            leftButton.setText(currentWord);
+            rightButton.setText(currentColorKey);
         }
 
-        updateScore();
+        scoreBox.setText("Score: " + score);;
         startTimer();
     }
 
@@ -171,18 +162,14 @@ public class GameFragment extends Fragment {
             timer.cancel();
         }
 
-        if (chosen.equals(correctAnswer)) {
+        if (chosen.equals(currentColorKey)) {
             score++;
         } else {
             score--;
         }
 
-        updateScore();
+        scoreBox.setText("Score: " + score);;
         startRound();
-    }
-
-    public void updateScore() {
-        scoreBox.setText("Score: " + score);
     }
 
     private void startTimer() {
@@ -190,12 +177,15 @@ public class GameFragment extends Fragment {
 
         timer = new CountDownTimer(timeForRound, 1000) {
 
+            //isAdded checks to see if its attached to current fragment
+            //its just another check to not crash when the screen is rotated
             @Override
             public void onTick(long millisUntilFinished) {
                 if (!isAdded()) return;
                 timerText.setText("Time: " + (millisUntilFinished / 1000));
             }
 
+            //make GameOverFragment when timer runs out
             @Override
             public void onFinish() {
                 if (!isAdded()) return;
@@ -210,6 +200,7 @@ public class GameFragment extends Fragment {
                 bundle.putInt("final_score", score);
                 gameOverFragment.setArguments(bundle);
 
+                // the transition animations
                 requireActivity().getSupportFragmentManager()
                         .beginTransaction()
                         .setCustomAnimations(
@@ -223,8 +214,11 @@ public class GameFragment extends Fragment {
         }.start();
     }
 
+    //technically 6 secs but cause of time and stuff
+    //the display starts at 4
+    //(5.00 secs on start -> 4.99 secs) so you never see 5 and it feels weird
     private long getTimeForRound() {
-        long baseTime = 5000;
+        long baseTime = 6000;
         long decrease = score * 200;
         long minTime = 1000;
 

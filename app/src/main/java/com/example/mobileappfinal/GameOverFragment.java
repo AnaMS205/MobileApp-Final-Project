@@ -15,31 +15,37 @@ import androidx.fragment.app.Fragment;
 
 public class GameOverFragment extends Fragment {
 
+
+    TextView finalScoreText;
+    TextView score1Text;
+    TextView score2Text;
+    TextView score3Text;
+
+    Button retryButton;
+    Button resetButton;
+
     public GameOverFragment() {}
 
     @Override
-    public View onCreateView(
-            @NonNull LayoutInflater inflater,
-            ViewGroup container,
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
             Bundle savedInstanceState
     ) {
         return inflater.inflate(R.layout.game_over_fragment, container, false);
     }
 
     @Override
-    public void onViewCreated(
-            @NonNull View view,
-            @Nullable Bundle savedInstanceState
-    ) {
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        TextView finalScoreText = view.findViewById(R.id.finalScoreText);
-        TextView score1 = view.findViewById(R.id.score1);
-        TextView score2 = view.findViewById(R.id.score2);
-        TextView score3 = view.findViewById(R.id.score3);
+        finalScoreText = view.findViewById(R.id.finalScoreText);
+        score1Text = view.findViewById(R.id.score1);
+        score2Text = view.findViewById(R.id.score2);
+        score3Text = view.findViewById(R.id.score3);
 
-        Button retryButton = view.findViewById(R.id.retryButton);
+        retryButton = view.findViewById(R.id.retryButton);
+        resetButton = view.findViewById(R.id.resetScoreButton);
 
+        //loads new game and plays animation
         retryButton.setOnClickListener(v -> {
 
             requireActivity().getSupportFragmentManager()
@@ -51,22 +57,33 @@ public class GameOverFragment extends Fragment {
                     .replace(R.id.fragment_container, new GameFragment())
                     .commit();
         });
+        resetButton.setOnClickListener(v-> {
+            var prefs = requireActivity().getSharedPreferences("scores", 0);
 
-        int finalScore = getArguments() != null
-                ? getArguments().getInt("final_score")
-                : 0;
+            prefs.edit().clear().apply();
+
+            updateUI(loadScores());
+        });
+
+
+
+        //yoink the score from the previous game
+        int finalScore = (getArguments() != null) ? getArguments().getInt("final_score") : 0;
 
         finalScoreText.setText("Score: " + finalScore);
 
         HighScores scores = loadScores();
 
+        //if the score is bigger than the 3rd highest then prompt for initials
+        //the prompt will check if its bigger than 2nd or 1st
         if (finalScore > scores.score3) {
-            promptForInitials(finalScore, scores, score1, score2, score3);
+            promptForInitials(finalScore, scores);
         } else {
-            updateUI(scores, score1, score2, score3);
+            updateUI(scores);
         }
     }
 
+    //doing all this just because I dont want to make a txt file
     private HighScores loadScores() {
         var prefs = requireActivity().getSharedPreferences("scores", 0);
 
@@ -80,19 +97,13 @@ public class GameOverFragment extends Fragment {
         );
     }
 
-    private void promptForInitials(
-            int finalScore,
-            HighScores scores,
-            TextView score1,
-            TextView score2,
-            TextView score3
+    private void promptForInitials(int finalScore, HighScores scores
     ) {
-
+        //popup to get initials
         EditText input = new EditText(requireContext());
         input.setHint("Enter 3 initials");
         input.setFilters(new android.text.InputFilter[]{
-                new android.text.InputFilter.LengthFilter(3)
-        });
+                new android.text.InputFilter.LengthFilter(3)});//initials can be at most 3
 
         new AlertDialog.Builder(requireContext())
                 .setTitle("New High Score!")
@@ -103,18 +114,15 @@ public class GameOverFragment extends Fragment {
 
                     String initials = input.getText().toString().toUpperCase();
 
-                    if (initials.length() < 3) {
-                        initials = (initials + "AAA").substring(0, 3);
-                    }
-
                     HighScores updated = insertScore(finalScore, initials, scores);
 
                     saveScores(updated);
-                    updateUI(updated, score1, score2, score3);
-                })
-                .show();
+                    updateUI(updated);
+                }).show();
     }
 
+    //checks all scores against new highscore
+    //returns a new HighScore obj to operate on
     private HighScores insertScore(int score, String name, HighScores highscore) {
 
         if (score > highscore.score1) {
@@ -135,6 +143,7 @@ public class GameOverFragment extends Fragment {
         }
     }
 
+    //all the score and initials are stored
     private void saveScores(HighScores highscore) {
         var prefs = requireActivity().getSharedPreferences("scores", 0);
 
@@ -145,17 +154,14 @@ public class GameOverFragment extends Fragment {
                 .apply();
     }
 
-    private void updateUI(
-            HighScores highscore,
-            TextView score1,
-            TextView score2,
-            TextView score3
-    ) {
-        score1.setText(highscore.name1 + " - " + highscore.score1);
-        score2.setText(highscore.name2 + " - " + highscore.score2);
-        score3.setText(highscore.name3 + " - " + highscore.score3);
+    //this just sets the textboxes
+    private void updateUI(HighScores highscore) {
+        score1Text.setText(highscore.name1 + " - " + highscore.score1);
+        score2Text.setText(highscore.name2 + " - " + highscore.score2);
+        score3Text.setText(highscore.name3 + " - " + highscore.score3);
     }
 
+    //chonky boi to easily hold all the score in one spot
     public class HighScores {
 
         public int score1, score2, score3;
