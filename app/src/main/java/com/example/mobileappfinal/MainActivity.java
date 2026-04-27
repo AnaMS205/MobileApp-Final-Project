@@ -24,7 +24,7 @@ public class MainActivity extends AppCompatActivity {
 
         if (savedInstanceState == null) {
             getSupportFragmentManager().beginTransaction()
-                    .replace(R.id.fragment_container, new GameFragment())//<-- swap out new GameFragment for MenuFragment and thats what it will display on start
+                    .replace(R.id.fragment_container, new TitleScreenActivity())//<-- swap out new GameFragment for MenuFragment and thats what it will display on start
                     .commit();
         }
     }

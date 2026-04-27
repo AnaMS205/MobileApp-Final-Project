@@ -1,47 +1,42 @@
 package com.example.mobileappfinal;
 
-
-
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.TextView;
-import androidx.activity.EdgeToEdge;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.graphics.Insets;
-import androidx.core.view.ViewCompat;
-import androidx.core.view.WindowInsetsCompat;
-import java.util.Map;
-import java.util.Random;
-public class TitleScreenActivity extends AppCompatActivity {
+
+import androidx.fragment.app.Fragment;
+
+public class TitleScreenActivity extends Fragment {
 
     private Button startBtn;
 
+    public TitleScreenActivity() {
+        // Required empty public constructor
+    }
+
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_titlescreen);
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                             Bundle savedInstanceState) {
 
-        startBtn = findViewById(R.id.StartButton);
+        View view = inflater.inflate(R.layout.activity_titlescreen, container, false);
 
-        startBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                new Handler().postDelayed(
-                        new Runnable() {
-                            @Override
-                            public void run() {
-                                Intent intent = new Intent(TitleScreenActivity.this, MainActivity.class);
-                                startActivity(intent);
-                                finish();
-                            }
-                        }, 5
-                );
+        startBtn = view.findViewById(R.id.StartButton);
 
-            }
+        startBtn.setOnClickListener(v -> {
+            requireActivity().getSupportFragmentManager()
+                    .beginTransaction()
+                    .setCustomAnimations(
+                            R.anim.fade_in,
+                            R.anim.fade_out
+                    )
+                    .replace(R.id.fragment_container, new GameFragment())
+                    .commit();
         });
 
+        return view;
     }
 }

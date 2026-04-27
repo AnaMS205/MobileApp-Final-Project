@@ -208,7 +208,6 @@ public class GameFragment extends Fragment {
                                 R.anim.fade_out
                         )
                         .replace(R.id.fragment_container, gameOverFragment)
-                        .addToBackStack(null)
                         .commit();
             }
         }.start();
