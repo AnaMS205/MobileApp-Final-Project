@@ -10,7 +10,7 @@
         android:id="@+id/outOfTimeText"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Out of Time"
+        android:text="@string/out_of_time"
         android:textSize="32sp"
         android:textStyle="bold"
         android:textColor="#FFFFFF"
@@ -90,7 +90,7 @@
         android:id="@+id/retryButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Play Again"
+        android:text="@string/play_again"
         android:layout_marginTop="32dp"
         android:backgroundTint="#1F1F1F"
         android:textColor="#FFFFFF"
@@ -98,17 +98,28 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
 
-    <!-- Reset Button -->
     <Button
-        android:id="@+id/resetScoreButton"
+        android:id="@+id/mainMenuButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Reset Score Board"
+        android:text="@string/back_to_main_menu"
         android:layout_marginTop="16dp"
         android:backgroundTint="#1F1F1F"
         android:textColor="#FFFFFF"
         app:layout_constraintTop_toBottomOf="@id/retryButton"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
+    <Button
+        android:id="@+id/resetScoreButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/reset_score_board"
+        android:layout_marginTop="16dp"
+        android:backgroundTint="#1F1F1F"
+        android:textColor="#FFFFFF"
+        app:layout_constraintTop_toBottomOf="@id/mainMenuButton"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>

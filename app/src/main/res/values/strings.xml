@@ -1,3 +1,9 @@
 <resources>
     <string name="app_name">MobileAppFinal</string>
+    <string name="play_again">Play Again</string>
+    <string name="back_to_main_menu">Back To Main Menu</string>
+    <string name="reset_score_board">Reset Score Board</string>
+    <string name="out_of_time">Out of Time</string>
+    <string name="stroop_s_colors">Stroop\'s Colors</string>
+    <string name="start">Start</string>
 </resources>

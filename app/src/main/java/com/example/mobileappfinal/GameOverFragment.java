@@ -24,6 +24,8 @@ public class GameOverFragment extends Fragment {
     Button retryButton;
     Button resetButton;
 
+    Button mainMenuButton;
+
     public GameOverFragment() {}
 
     @Override
@@ -44,6 +46,7 @@ public class GameOverFragment extends Fragment {
 
         retryButton = view.findViewById(R.id.retryButton);
         resetButton = view.findViewById(R.id.resetScoreButton);
+        mainMenuButton = view.findViewById((R.id.mainMenuButton));
 
         //loads new game and plays animation
         retryButton.setOnClickListener(v -> {
@@ -57,6 +60,17 @@ public class GameOverFragment extends Fragment {
                     .replace(R.id.fragment_container, new GameFragment())
                     .commit();
         });
+        mainMenuButton.setOnClickListener(v -> {
+
+            requireActivity().getSupportFragmentManager()
+                    .beginTransaction()
+                    .setCustomAnimations(
+                            R.anim.fade_in,
+                            R.anim.fade_out
+                    )
+                    .replace(R.id.fragment_container, new TitleScreenFragment())
+                    .commit();
+        });
         resetButton.setOnClickListener(v-> {
             var prefs = requireActivity().getSharedPreferences("scores", 0);
 
@@ -64,6 +78,8 @@ public class GameOverFragment extends Fragment {
 
             updateUI(loadScores());
         });
+
+
 
 
 
@@ -107,7 +123,7 @@ public class GameOverFragment extends Fragment {
 
         new AlertDialog.Builder(requireContext())
                 .setTitle("New High Score!")
-                .setMessage("Enter your initials:")
+                .setMessage("Enter your initials or nickname:")
                 .setView(input)
                 .setCancelable(false)
                 .setPositiveButton("OK", (dialog, which) -> {
