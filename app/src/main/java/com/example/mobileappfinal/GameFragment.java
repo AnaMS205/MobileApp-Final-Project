@@ -7,6 +7,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
+import android.media.MediaPlayer;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -22,6 +23,10 @@ public class GameFragment extends Fragment {
     private TextView wordBox;
     private TextView scoreBox;
     private TextView timerText;
+
+    private MediaPlayer correctSound;
+    private MediaPlayer wrongSound;
+
 
     private CountDownTimer timer;
 
@@ -66,6 +71,11 @@ public class GameFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState
     ) {
         super.onViewCreated(view, savedInstanceState);
+
+        correctSound = MediaPlayer.create(getContext(), R.raw.correct_ding);
+        correctSound.setVolume(.9f, .9f);
+        wrongSound = MediaPlayer.create(getContext(), R.raw.wrong_ding);
+        wrongSound.setVolume(.9f, .9f);
 
         leftButton = view.findViewById(R.id.leftButton);
         rightButton = view.findViewById(R.id.rightButton);
@@ -164,7 +174,13 @@ public class GameFragment extends Fragment {
 
         if (chosen.equals(currentColorKey)) {
             score++;
+            if (correctSound != null) {
+                correctSound.start();
+            }
         } else {
+            if(wrongSound != null){
+                wrongSound.start();
+            }
             score--;
         }
 
